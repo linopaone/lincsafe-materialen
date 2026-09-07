@@ -847,9 +847,7 @@ document.getElementById('btn-copy-list').addEventListener('click',()=>{
   const rows=[...document.querySelectorAll('#order-tbody tr')];
   const date=fmtDate();
   let txt=`BESTELLIJST PAOTEC — ${date}\n`;
-  txt+='─'.repeat(50)+'\n';
-  txt+='Nr.     Omschrijving                              Vrd  Aantal\n';
-  txt+='─'.repeat(50)+'\n';
+  txt+='Nr.\tOmschrijving\tVoorraad\tAantal\n';
   rows.forEach(tr=>{
     const id=tr.dataset.id;
     const p=allParts().find(x=>x.id===id);
@@ -857,11 +855,8 @@ document.getElementById('btn-copy-list').addEventListener('click',()=>{
     const stock=getStock(id);
     const stockStr=stock===null?'-':String(stock);
     const qty=tr.querySelector('.qty-input')?.value||'1';
-    const nr=String(p.nr).padEnd(7);
-    const desc=p.desc.substring(0,40).padEnd(41);
-    txt+=`${nr} ${desc} ${stockStr.padStart(3)}  ${qty}\n`;
+    txt+=`${p.nr}\t${p.desc}\t${stockStr}\t${qty}\n`;
   });
-  txt+='─'.repeat(50);
   navigator.clipboard.writeText(txt).then(()=>{
     const ok=document.getElementById('copy-ok');
     ok.classList.add('show');
