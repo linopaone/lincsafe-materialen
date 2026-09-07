@@ -900,12 +900,23 @@ function showDataMsg(txt,type){
 }
 
 document.getElementById('btn-export').addEventListener('click',()=>{
-  const data=JSON.stringify(store,null,2);
+  const parts=allParts();
+  const artikelen=parts.map(p=>{
+    const v=getStock(p.id);
+    return{nr:p.nr,omschrijving:p.desc,voorraad:v,bron:p.custom?'eigen':'standaard'};
+  });
+  const exportData={
+    app:'Lincsafe Materialen',
+    versie:2,
+    datum:new Date().toISOString().slice(0,10),
+    artikelen,
+    store
+  };
+  const data=JSON.stringify(exportData,null,2);
   const blob=new Blob([data],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  const d=new Date();
-  const datum=d.toISOString().slice(0,10);
+  const datum=new Date().toISOString().slice(0,10);
   a.href=url;a.download=`lincsafe-backup-${datum}.json`;
   document.body.appendChild(a);a.click();
   document.body.removeChild(a);URL.revokeObjectURL(url);
@@ -923,10 +934,12 @@ document.getElementById('import-file').addEventListener('change',e=>{
     try{
       const data=JSON.parse(ev.target.result);
       if(typeof data!=='object'||Array.isArray(data))throw new Error('Ongeldig formaat');
-      store.deleted=Array.isArray(data.deleted)?data.deleted:store.deleted;
-      store.edits=typeof data.edits==='object'&&!Array.isArray(data.edits)?data.edits:store.edits;
-      store.custom=Array.isArray(data.custom)?data.custom:store.custom;
-      store.stock=typeof data.stock==='object'&&!Array.isArray(data.stock)?data.stock:store.stock;
+      // Versie 2 slaat store op onder data.store; versie 1 had alles op top-niveau
+      const src=(data.versie>=2&&data.store&&typeof data.store==='object')?data.store:data;
+      store.deleted=Array.isArray(src.deleted)?src.deleted:store.deleted;
+      store.edits=typeof src.edits==='object'&&!Array.isArray(src.edits)?src.edits:store.edits;
+      store.custom=Array.isArray(src.custom)?src.custom:store.custom;
+      store.stock=typeof src.stock==='object'&&!Array.isArray(src.stock)?src.stock:store.stock;
       saveStore();render();
       showDataMsg('✓ Data succesvol geïmporteerd','ok');
     }catch{
