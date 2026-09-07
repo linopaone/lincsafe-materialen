@@ -846,22 +846,38 @@ document.getElementById('btn-print').addEventListener('click',()=>window.print()
 document.getElementById('btn-copy-list').addEventListener('click',()=>{
   const rows=[...document.querySelectorAll('#order-tbody tr')];
   const date=fmtDate();
+
+  // Platte tekst als fallback (WhatsApp, Notities e.d.)
   let txt=`BESTELLIJST PAOTEC — ${date}\n`;
   txt+='Nr.\tOmschrijving\tVoorraad\tAantal\n';
+
+  // HTML-tabel voor e-mailprogramma's (Gmail, Outlook, Apple Mail)
+  let html=`<p style="font-family:Arial,sans-serif;font-size:14px;margin:0 0 8px"><b>BESTELLIJST PAOTEC — ${date}</b></p>`;
+  html+=`<table border="1" cellpadding="7" cellspacing="0" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:14px;border-color:#ccc;">`;
+  html+=`<thead><tr style="background:#f2f2f2;"><th align="left" style="white-space:nowrap;">Nr.</th><th align="left">Omschrijving</th><th align="center" style="white-space:nowrap;">Voorraad</th><th align="center" style="white-space:nowrap;">Aantal</th></tr></thead><tbody>`;
+
   rows.forEach(tr=>{
     const id=tr.dataset.id;
     const p=allParts().find(x=>x.id===id);
     if(!p)return;
     const stock=getStock(id);
-    const stockStr=stock===null?'-':String(stock);
+    const stockStr=stock===null?'—':String(stock);
     const qty=tr.querySelector('.qty-input')?.value||'1';
     txt+=`${p.nr}\t${p.desc}\t${stockStr}\t${qty}\n`;
+    html+=`<tr><td style="font-weight:bold;white-space:nowrap;">${p.nr}</td><td>${p.desc}</td><td align="center">${stockStr}</td><td align="center">${qty}</td></tr>`;
   });
-  navigator.clipboard.writeText(txt).then(()=>{
-    const ok=document.getElementById('copy-ok');
-    ok.classList.add('show');
-    setTimeout(()=>ok.classList.remove('show'),2500);
-  }).catch(()=>{});
+  html+=`</tbody></table>`;
+
+  const toonOk=()=>{const ok=document.getElementById('copy-ok');ok.classList.add('show');setTimeout(()=>ok.classList.remove('show'),2500);};
+  const fallback=()=>navigator.clipboard.writeText(txt).then(toonOk).catch(()=>{});
+
+  if(window.ClipboardItem){
+    const htmlBlob=new Blob([html],{type:'text/html'});
+    const textBlob=new Blob([txt],{type:'text/plain'});
+    navigator.clipboard.write([new ClipboardItem({'text/html':htmlBlob,'text/plain':textBlob})]).then(toonOk).catch(fallback);
+  } else {
+    fallback();
+  }
 });
 
 // ── DELETE ────────────────────────────────────────────────────────────────
