@@ -91,7 +91,7 @@
 
   /* LIST */
   .list-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);}
-  .list-hdr{display:grid;grid-template-columns:36px 80px 1fr 60px 80px;gap:.4rem;align-items:center;padding:.55rem 1rem;background:var(--mono-bg);border-bottom:1.5px solid var(--border);}
+  .list-hdr{display:grid;grid-template-columns:36px 62px 1fr 60px 80px;gap:.4rem;align-items:center;padding:.55rem 1rem;background:var(--mono-bg);border-bottom:1.5px solid var(--border);}
   .list-hdr span{font-size:.67rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
   .h-chk{display:flex;align-items:center;justify-content:center;}
   .h-stock{text-align:center;}
@@ -104,7 +104,7 @@
   .pitem:last-child{border-bottom:none;}
   .pitem.selected .prow{background:color-mix(in srgb,var(--accent-bg) 60%,transparent);}
 
-  .prow{display:grid;grid-template-columns:36px 80px 1fr 60px 80px;gap:.4rem;align-items:center;padding:.6rem 1rem;transition:background .1s;cursor:default;}
+  .prow{display:grid;grid-template-columns:36px 62px 1fr 60px 80px;gap:.4rem;align-items:center;padding:.6rem 1rem;transition:background .1s;cursor:default;}
   .pitem:not(.editing):not(.selected):hover .prow{background:var(--mono-bg);}
 
   /* Checkbox */
@@ -280,15 +280,15 @@
   .data-info{font-size:.78rem;color:var(--muted);line-height:1.5;}
 
   @media(max-width:480px){
-    .list-hdr{grid-template-columns:32px 72px 1fr 52px 68px;}
-    .prow{grid-template-columns:32px 72px 1fr 52px 68px;}
+    .list-hdr{grid-template-columns:32px 58px 1fr 52px 68px;}
+    .prow{grid-template-columns:32px 58px 1fr 52px 68px;}
     .nr-badge{font-size:.7rem;}
     .desc-text{font-size:.78rem;}
     .stock-chip{min-width:36px;height:30px;font-size:.76rem;}
   }
   @media(max-width:360px){
-    .list-hdr{grid-template-columns:28px 66px 1fr 46px 58px;}
-    .prow{grid-template-columns:28px 66px 1fr 46px 58px;}
+    .list-hdr{grid-template-columns:28px 54px 1fr 46px 58px;}
+    .prow{grid-template-columns:28px 54px 1fr 46px 58px;}
     .iactions{gap:.15rem;}
     .ibtn{min-width:24px;min-height:24px;padding:.2rem;}
   }
@@ -437,17 +437,13 @@
       </div>
     </div>
     <div class="modal-footer">
-      <div class="copy-ok" id="copy-ok">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l4 4 6-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Gekopieerd!
-      </div>
       <button class="btn-print" id="btn-print">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="3" y="6" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M5 6V3h6v3" stroke="currentColor" stroke-width="1.4"/><rect x="5" y="9" width="6" height="1.5" rx=".5" fill="currentColor"/></svg>
         Afdrukken
       </button>
-      <button class="btn-copy-list" id="btn-copy-list">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5" stroke="currentColor" stroke-width="1.5"/></svg>
-        Kopieer lijst
+      <button class="btn-copy-list" id="btn-email-list">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="4" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M2 5l6 5 6-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        E-mail
       </button>
     </div>
   </div>
@@ -843,19 +839,12 @@ modalOverlay.addEventListener('click',e=>{if(e.target===modalOverlay)modalOverla
 
 document.getElementById('btn-print').addEventListener('click',()=>window.print());
 
-document.getElementById('btn-copy-list').addEventListener('click',()=>{
+document.getElementById('btn-email-list').addEventListener('click',()=>{
   const rows=[...document.querySelectorAll('#order-tbody tr')];
   const date=fmtDate();
-
-  // Platte tekst als fallback (WhatsApp, Notities e.d.)
-  let txt=`BESTELLIJST PAOTEC — ${date}\n`;
-  txt+='Nr.\tOmschrijving\tVoorraad\tAantal\n';
-
-  // HTML-tabel voor e-mailprogramma's (Gmail, Outlook, Apple Mail)
-  let html=`<p style="font-family:Arial,sans-serif;font-size:14px;margin:0 0 8px"><b>BESTELLIJST PAOTEC — ${date}</b></p>`;
-  html+=`<table border="1" cellpadding="7" cellspacing="0" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:14px;border-color:#ccc;">`;
-  html+=`<thead><tr style="background:#f2f2f2;"><th align="left" style="white-space:nowrap;">Nr.</th><th align="left">Omschrijving</th><th align="center" style="white-space:nowrap;">Voorraad</th><th align="center" style="white-space:nowrap;">Aantal</th></tr></thead><tbody>`;
-
+  const subject=`Bestellijst PAOTEC — ${date}`;
+  let body=`BESTELLIJST PAOTEC — ${date}\r\n`;
+  body+=`Nr.\tOmschrijving\tVoorraad\tAantal\r\n`;
   rows.forEach(tr=>{
     const id=tr.dataset.id;
     const p=allParts().find(x=>x.id===id);
@@ -863,21 +852,9 @@ document.getElementById('btn-copy-list').addEventListener('click',()=>{
     const stock=getStock(id);
     const stockStr=stock===null?'—':String(stock);
     const qty=tr.querySelector('.qty-input')?.value||'1';
-    txt+=`${p.nr}\t${p.desc}\t${stockStr}\t${qty}\n`;
-    html+=`<tr><td style="font-weight:bold;white-space:nowrap;">${p.nr}</td><td>${p.desc}</td><td align="center">${stockStr}</td><td align="center">${qty}</td></tr>`;
+    body+=`${p.nr}\t${p.desc}\t${stockStr}\t${qty}\r\n`;
   });
-  html+=`</tbody></table>`;
-
-  const toonOk=()=>{const ok=document.getElementById('copy-ok');ok.classList.add('show');setTimeout(()=>ok.classList.remove('show'),2500);};
-  const fallback=()=>navigator.clipboard.writeText(txt).then(toonOk).catch(()=>{});
-
-  if(window.ClipboardItem){
-    const htmlBlob=new Blob([html],{type:'text/html'});
-    const textBlob=new Blob([txt],{type:'text/plain'});
-    navigator.clipboard.write([new ClipboardItem({'text/html':htmlBlob,'text/plain':textBlob})]).then(toonOk).catch(fallback);
-  } else {
-    fallback();
-  }
+  window.location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 });
 
 // ── DELETE ────────────────────────────────────────────────────────────────
