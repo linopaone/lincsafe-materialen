@@ -428,7 +428,6 @@
             <tr>
               <th>Artikel nr.</th>
               <th>Omschrijving</th>
-              <th style="text-align:center;">Voorraad</th>
               <th style="text-align:center;">Bestellen</th>
             </tr>
           </thead>
@@ -819,12 +818,9 @@ document.getElementById('btn-order').addEventListener('click',()=>{
   document.getElementById('order-meta').textContent=`Datum: ${fmtDate()} · ${parts.length} artikel(en)`;
 
   document.getElementById('order-tbody').innerHTML=parts.map(p=>{
-    const stock=getStock(p.id);
-    const stockStr=stock===null?'—':String(stock);
     return`<tr data-id="${esc(p.id)}">
       <td class="o-nr">${esc(String(p.nr))}</td>
       <td>${esc(p.desc)}</td>
-      <td class="o-stock">${esc(stockStr)}</td>
       <td class="o-qty"><input type="number" min="1" max="999" value="1" inputmode="numeric" class="qty-input"></td>
     </tr>`;
   }).join('');
@@ -848,11 +844,9 @@ document.getElementById('btn-email-list').addEventListener('click',()=>{
     const id=tr.dataset.id;
     const p=allParts().find(x=>x.id===id);
     if(!p)return;
-    const stock=getStock(id);
-    const stockStr=stock===null?'—':String(stock);
     const qty=tr.querySelector('.qty-input')?.value||'1';
     body+=`${p.nr}  ${p.desc}\n`;
-    body+=`  Voorraad: ${stockStr}  |  Bestellen: ${qty}\n\n`;
+    body+=`  Bestellen: ${qty}\n\n`;
   });
   body+=`${'─'.repeat(40)}\nPAOTEC — Via Regia 138-E, 6217 JX Maastricht`;
 
