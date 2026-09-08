@@ -842,9 +842,8 @@ document.getElementById('btn-print').addEventListener('click',()=>window.print()
 document.getElementById('btn-email-list').addEventListener('click',()=>{
   const rows=[...document.querySelectorAll('#order-tbody tr')];
   const date=fmtDate();
-  const subject=`Bestellijst PAOTEC — ${date}`;
-  let body=`BESTELLIJST PAOTEC — ${date}\r\n`;
-  body+=`Nr.\tOmschrijving\tVoorraad\tAantal\r\n`;
+  const title=`Bestellijst PAOTEC — ${date}`;
+  let body=`${title}\n${'─'.repeat(40)}\n\n`;
   rows.forEach(tr=>{
     const id=tr.dataset.id;
     const p=allParts().find(x=>x.id===id);
@@ -852,9 +851,16 @@ document.getElementById('btn-email-list').addEventListener('click',()=>{
     const stock=getStock(id);
     const stockStr=stock===null?'—':String(stock);
     const qty=tr.querySelector('.qty-input')?.value||'1';
-    body+=`${p.nr}\t${p.desc}\t${stockStr}\t${qty}\r\n`;
+    body+=`${p.nr}  ${p.desc}\n`;
+    body+=`  Voorraad: ${stockStr}  |  Bestellen: ${qty}\n\n`;
   });
-  window.location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  body+=`${'─'.repeat(40)}\nPAOTEC — Via Regia 138-E, 6217 JX Maastricht`;
+
+  if(navigator.share){
+    navigator.share({title,text:body}).catch(()=>{});
+  } else {
+    window.location.href=`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+  }
 });
 
 // ── DELETE ────────────────────────────────────────────────────────────────
