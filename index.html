@@ -820,7 +820,7 @@ document.getElementById('btn-order').addEventListener('click',()=>{
   document.getElementById('order-tbody').innerHTML=parts.map(p=>{
     return`<tr data-id="${esc(p.id)}">
       <td class="o-nr">${esc(String(p.nr))}</td>
-      <td>${esc(p.desc)}</td>
+      <td>— ${esc(p.desc)}</td>
       <td class="o-qty"><input type="number" min="1" max="999" value="1" inputmode="numeric" class="qty-input"></td>
     </tr>`;
   }).join('');
@@ -845,7 +845,7 @@ document.getElementById('btn-email-list').addEventListener('click',()=>{
     const p=allParts().find(x=>x.id===id);
     if(!p)return;
     const qty=tr.querySelector('.qty-input')?.value||'1';
-    body+=`${p.nr}  ${p.desc}\n`;
+    body+=`${p.nr} — ${p.desc}\n`;
     body+=`  Bestellen: ${qty}\n\n`;
   });
   body+=`${'─'.repeat(40)}\nPAOTEC — Via Regia 138-E, 6217 JX Maastricht`;
