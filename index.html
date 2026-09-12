@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lincsafe Materialen</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23C8323A'/%3E%3Cpolygon points='8,28 32,12 56,28' fill='white' opacity='.95'/%3E%3Crect x='11' y='27' width='42' height='24' rx='1' fill='white' opacity='.95'/%3E%3Crect x='26' y='38' width='12' height='13' rx='1' fill='%23C8323A'/%3E%3Crect x='15' y='32' width='8' height='5' rx='1' fill='%23C8323A' opacity='.7'/%3E%3Crect x='41' y='32' width='8' height='5' rx='1' fill='%23C8323A' opacity='.7'/%3E%3C/svg%3E">
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#C8323A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -1028,7 +1028,7 @@ render();
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
   });
 }
 </script>
