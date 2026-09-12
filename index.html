@@ -91,7 +91,7 @@
 
   /* LIST */
   .list-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);}
-  .list-hdr{display:grid;grid-template-columns:36px 1fr 80px 60px;gap:.4rem;align-items:center;padding:.55rem 1rem;background:var(--mono-bg);border-bottom:1.5px solid var(--border);}
+  .list-hdr{display:grid;grid-template-columns:36px 1fr 60px;gap:.4rem;align-items:center;padding:.55rem 1rem;background:var(--mono-bg);border-bottom:1.5px solid var(--border);}
   .list-hdr span{font-size:.67rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
   .h-chk{display:flex;align-items:center;justify-content:center;}
   .h-stock{text-align:center;}
@@ -104,14 +104,15 @@
   .pitem:last-child{border-bottom:none;}
   .pitem.selected .prow{background:color-mix(in srgb,var(--accent-bg) 60%,transparent);}
 
-  .prow{display:grid;grid-template-columns:36px 1fr 80px 60px;gap:.4rem;align-items:center;padding:.6rem 1rem;transition:background .1s;cursor:default;}
+  .prow{display:grid;grid-template-columns:36px 1fr 60px;gap:.4rem;align-items:center;padding:.6rem 1rem;transition:background .1s;cursor:default;}
   .pitem:not(.editing):not(.selected):hover .prow{background:var(--mono-bg);}
 
   /* Checkbox */
   .row-chk{display:flex;align-items:center;justify-content:center;align-self:flex-start;padding-top:.05rem;}
   .row-chk input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--accent);flex-shrink:0;}
 
-  .nr-badge{font-family:'IBM Plex Mono',monospace;font-size:.9rem;font-weight:600;color:var(--accent);background:var(--accent-bg);padding:.18rem .35rem;border-radius:4px;font-variant-numeric:tabular-nums;display:inline-block;align-self:flex-start;text-align:center;}
+  .nr-row{display:flex;align-items:center;gap:.5rem;}
+  .nr-badge{font-family:'IBM Plex Mono',monospace;font-size:.9rem;font-weight:600;color:var(--accent);background:var(--accent-bg);padding:.18rem .35rem;border-radius:4px;font-variant-numeric:tabular-nums;display:inline-block;text-align:center;flex-shrink:0;}
   .nr-badge.in-stock{color:var(--green);background:var(--green-bg);}
   .desc-col{display:flex;flex-direction:column;gap:.25rem;min-width:0;}
   .desc-text{font-size:.99rem;font-weight:500;line-height:1.4;word-break:break-word;}
@@ -121,7 +122,7 @@
   .tag.edited{color:var(--orange);background:var(--orange-bg);}
 
   /* Stock chip */
-  .stock-col{display:flex;justify-content:center;align-self:flex-start;}
+  .stock-col{display:flex;justify-content:center;align-self:center;}
   .stock-chip{font-family:'IBM Plex Mono',monospace;font-size:.82rem;font-weight:600;min-width:42px;height:34px;border-radius:7px;border:2px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .1s;user-select:none;-webkit-user-select:none;font-variant-numeric:tabular-nums;}
   .stock-chip:active{transform:scale(.93);}
   .stock-chip.s-empty{color:var(--accent);background:var(--accent-bg);border-color:var(--accent);}
@@ -136,7 +137,7 @@
   .s-input{font-family:'IBM Plex Mono',monospace;font-size:.88rem;font-weight:600;width:40px;height:28px;text-align:center;border:1.5px solid var(--accent);border-radius:5px;background:var(--surface);color:var(--text);outline:none;-webkit-appearance:none;padding:0;}
   .s-ok-btn{width:28px;height:28px;border-radius:6px;border:none;background:var(--green);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 
-  .iactions{display:flex;gap:.25rem;justify-content:flex-end;align-self:flex-start;}
+  .iactions{display:flex;gap:.25rem;}
   .ibtn{background:none;border:1px solid var(--border);border-radius:5px;cursor:pointer;color:var(--muted);padding:.26rem;display:flex;align-items:center;justify-content:center;transition:color .12s,border-color .12s,background .12s;min-width:28px;min-height:28px;}
   .ibtn:hover.edit-btn{color:var(--orange);border-color:var(--orange);background:var(--orange-bg);}
   .ibtn:hover.del-btn{color:var(--accent);border-color:var(--accent);background:var(--accent-bg);}
@@ -281,15 +282,15 @@
   .data-info{font-size:.78rem;color:var(--muted);line-height:1.5;}
 
   @media(max-width:480px){
-    .list-hdr{grid-template-columns:32px 1fr 68px 52px;}
-    .prow{grid-template-columns:32px 1fr 68px 52px;}
+    .list-hdr{grid-template-columns:32px 1fr 52px;}
+    .prow{grid-template-columns:32px 1fr 52px;}
     .nr-badge{font-size:.84rem;}
     .desc-text{font-size:.92rem;}
     .stock-chip{min-width:36px;height:30px;font-size:.76rem;}
   }
   @media(max-width:360px){
-    .list-hdr{grid-template-columns:28px 1fr 58px 46px;}
-    .prow{grid-template-columns:28px 1fr 58px 46px;}
+    .list-hdr{grid-template-columns:28px 1fr 46px;}
+    .prow{grid-template-columns:28px 1fr 46px;}
     .iactions{gap:.15rem;}
     .ibtn{min-width:24px;min-height:24px;padding:.2rem;}
   }
@@ -389,7 +390,6 @@
     <div class="list-hdr">
       <div class="h-chk"><input type="checkbox" class="chk-all" id="chk-all" title="Alles selecteren"></div>
       <span>Artikel</span>
-      <span></span>
       <span class="h-stock">Voorraad</span>
     </div>
     <ul class="plist" id="plist"></ul>
@@ -557,7 +557,7 @@
           <div class="help-icon">
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5" stroke="currentColor" stroke-width="1.5"/></svg>
           </div>
-          <div class="help-text">Tik op het <b>kopieer-icoontje</b> rechts van een artikel om het artikelnummer direct naar het klembord te kopiëren.</div>
+          <div class="help-text">Tik op het <b>potlood-icoontje</b> rechts van een artikel om het te bewerken, of op het <b>prullenbak-icoontje</b> om het te verwijderen.</div>
         </div>
       </div>
 
@@ -712,14 +712,15 @@ function render(){
       <div class="prow">
         <div class="row-chk"><input type="checkbox" class="row-checkbox" data-id="${esc(p.id)}"${isSel?' checked':''}></div>
         <div class="desc-col">
-          <span class="nr-badge${sc==='s-ok'?' in-stock':''}">${hl(String(p.nr),q)}</span>
+          <div class="nr-row">
+            <span class="nr-badge${sc==='s-ok'?' in-stock':''}">${hl(String(p.nr),q)}</span>
+            <div class="iactions">
+              <button class="ibtn edit-btn" data-id="${esc(p.id)}">${ICON_EDIT}</button>
+              <button class="ibtn del-btn" data-id="${esc(p.id)}" data-nr="${p.nr}" data-desc="${esc(p.desc)}">${ICON_TRASH}</button>
+            </div>
+          </div>
           <span class="desc-text">${hl(p.desc,q)}</span>
           ${tags?`<div class="tags">${tags}</div>`:''}
-        </div>
-        <div class="iactions">
-          <button class="ibtn copy-btn" data-nr="${p.nr}">${ICON_COPY}</button>
-          <button class="ibtn edit-btn" data-id="${esc(p.id)}">${ICON_EDIT}</button>
-          <button class="ibtn del-btn" data-id="${esc(p.id)}" data-nr="${p.nr}" data-desc="${esc(p.desc)}">${ICON_TRASH}</button>
         </div>
         <div class="stock-col${isStockEdit?' active':''}" data-id="${esc(p.id)}">
           <button class="stock-chip ${sc}" title="Voorraad wijzigen">${esc(sl)}</button>
