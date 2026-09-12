@@ -112,6 +112,7 @@
   .row-chk input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--accent);flex-shrink:0;}
 
   .nr-badge{font-family:'IBM Plex Mono',monospace;font-size:.76rem;font-weight:600;color:var(--accent);background:var(--accent-bg);padding:.18rem .35rem;border-radius:4px;font-variant-numeric:tabular-nums;display:inline-block;align-self:flex-start;text-align:center;}
+  .nr-badge.in-stock{color:var(--green);background:var(--green-bg);}
   .desc-col{display:flex;flex-direction:column;gap:.25rem;min-width:0;}
   .desc-text{font-size:.85rem;line-height:1.4;word-break:break-word;}
   .tags{display:flex;gap:.3rem;flex-wrap:wrap;}
@@ -711,7 +712,7 @@ function render(){
       <div class="prow">
         <div class="row-chk"><input type="checkbox" class="row-checkbox" data-id="${esc(p.id)}"${isSel?' checked':''}></div>
         <div class="desc-col">
-          <span class="nr-badge">${hl(String(p.nr),q)}</span>
+          <span class="nr-badge${sc==='s-ok'?' in-stock':''}">${hl(String(p.nr),q)}</span>
           <span class="desc-text">${hl(p.desc,q)}</span>
           ${tags?`<div class="tags">${tags}</div>`:''}
         </div>
