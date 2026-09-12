@@ -91,7 +91,7 @@
 
   /* LIST */
   .list-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);}
-  .list-hdr{display:grid;grid-template-columns:36px 62px 1fr 60px 80px;gap:.4rem;align-items:center;padding:.55rem 1rem;background:var(--mono-bg);border-bottom:1.5px solid var(--border);}
+  .list-hdr{display:grid;grid-template-columns:36px 1fr 60px 80px;gap:.4rem;align-items:center;padding:.55rem 1rem;background:var(--mono-bg);border-bottom:1.5px solid var(--border);}
   .list-hdr span{font-size:.67rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
   .h-chk{display:flex;align-items:center;justify-content:center;}
   .h-stock{text-align:center;}
@@ -104,15 +104,15 @@
   .pitem:last-child{border-bottom:none;}
   .pitem.selected .prow{background:color-mix(in srgb,var(--accent-bg) 60%,transparent);}
 
-  .prow{display:grid;grid-template-columns:36px 62px 1fr 60px 80px;gap:.4rem;align-items:center;padding:.6rem 1rem;transition:background .1s;cursor:default;}
+  .prow{display:grid;grid-template-columns:36px 1fr 60px 80px;gap:.4rem;align-items:center;padding:.6rem 1rem;transition:background .1s;cursor:default;}
   .pitem:not(.editing):not(.selected):hover .prow{background:var(--mono-bg);}
 
   /* Checkbox */
   .row-chk{display:flex;align-items:center;justify-content:center;}
   .row-chk input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--accent);flex-shrink:0;}
 
-  .nr-badge{font-family:'IBM Plex Mono',monospace;font-size:.76rem;font-weight:600;color:var(--accent);background:var(--accent-bg);padding:.18rem .35rem;border-radius:4px;font-variant-numeric:tabular-nums;display:block;text-align:center;}
-  .desc-col{display:flex;flex-direction:column;gap:.2rem;min-width:0;}
+  .nr-badge{font-family:'IBM Plex Mono',monospace;font-size:.76rem;font-weight:600;color:var(--accent);background:var(--accent-bg);padding:.18rem .35rem;border-radius:4px;font-variant-numeric:tabular-nums;display:inline-block;align-self:flex-start;text-align:center;}
+  .desc-col{display:flex;flex-direction:column;gap:.25rem;min-width:0;}
   .desc-text{font-size:.85rem;line-height:1.4;word-break:break-word;}
   .tags{display:flex;gap:.3rem;flex-wrap:wrap;}
   .tag{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;border-radius:3px;padding:.1rem .3rem;white-space:nowrap;}
@@ -280,15 +280,15 @@
   .data-info{font-size:.78rem;color:var(--muted);line-height:1.5;}
 
   @media(max-width:480px){
-    .list-hdr{grid-template-columns:32px 58px 1fr 52px 68px;}
-    .prow{grid-template-columns:32px 58px 1fr 52px 68px;}
+    .list-hdr{grid-template-columns:32px 1fr 52px 68px;}
+    .prow{grid-template-columns:32px 1fr 52px 68px;}
     .nr-badge{font-size:.7rem;}
     .desc-text{font-size:.78rem;}
     .stock-chip{min-width:36px;height:30px;font-size:.76rem;}
   }
   @media(max-width:360px){
-    .list-hdr{grid-template-columns:28px 54px 1fr 46px 58px;}
-    .prow{grid-template-columns:28px 54px 1fr 46px 58px;}
+    .list-hdr{grid-template-columns:28px 1fr 46px 58px;}
+    .prow{grid-template-columns:28px 1fr 46px 58px;}
     .iactions{gap:.15rem;}
     .ibtn{min-width:24px;min-height:24px;padding:.2rem;}
   }
@@ -388,8 +388,7 @@
   <div class="list-wrap">
     <div class="list-hdr">
       <div class="h-chk"><input type="checkbox" class="chk-all" id="chk-all" title="Alles selecteren"></div>
-      <span>Artikel nr.</span>
-      <span>Omschrijving</span>
+      <span>Artikel</span>
       <span class="h-stock">Voorraad</span>
       <span></span>
     </div>
@@ -712,8 +711,8 @@ function render(){
     <li class="pitem${isEditing?' editing':''}${isSel?' selected':''}" data-id="${esc(p.id)}">
       <div class="prow">
         <div class="row-chk"><input type="checkbox" class="row-checkbox" data-id="${esc(p.id)}"${isSel?' checked':''}></div>
-        <span class="nr-badge">${hl(String(p.nr),q)}</span>
         <div class="desc-col">
+          <span class="nr-badge">${hl(String(p.nr),q)}</span>
           <span class="desc-text">${hl(p.desc,q)}</span>
           ${tags?`<div class="tags">${tags}</div>`:''}
         </div>
