@@ -2,6 +2,7 @@
   "name": "Lincsafe Materialen",
   "short_name": "Lincsafe",
   "description": "Cennox · Lincsafe materialen overzicht — PAOTEC",
+  "author": "Lino Paone (PAOTEC) — info@paotec.nl",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
