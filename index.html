@@ -380,8 +380,7 @@
 
   <div class="legend">
     <div class="leg"><div class="leg-dot empty"></div>0 stuks</div>
-    <div class="leg"><div class="leg-dot low"></div>1–2 stuks</div>
-    <div class="leg"><div class="leg-dot ok"></div>3+ stuks</div>
+    <div class="leg"><div class="leg-dot ok"></div>1+ stuks</div>
     <span style="font-size:.7rem;color:var(--muted);margin-left:auto;">Tik op voorraad om te wijzigen</span>
   </div>
 
@@ -652,7 +651,7 @@ function allParts(){
   return[...base,...custom].sort((a,b)=>a.nr-b.nr);
 }
 function getStock(id){const v=store.stock[id];return(typeof v==='number')?v:null;}
-function stockClass(id){const v=getStock(id);if(v===null)return 's-none';if(v===0)return 's-empty';if(v<=2)return 's-low';return 's-ok';}
+function stockClass(id){const v=getStock(id);if(v===null)return 's-none';if(v===0)return 's-empty';return 's-ok';}
 function stockLabel(id){const v=getStock(id);return v===null?'—':String(v);}
 
 // ── HELPERS ───────────────────────────────────────────────────────────────
