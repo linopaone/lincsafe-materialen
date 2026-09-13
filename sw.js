@@ -1,4 +1,4 @@
-const CACHE = 'lincsafe-v4';
+const CACHE = 'lincsafe-v5';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png',
   './icon-192-maskable.png', './icon-512-maskable.png'];
 
