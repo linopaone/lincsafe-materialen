@@ -96,8 +96,6 @@
   .list-hdr span{font-size:.67rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
   .h-chk{display:flex;align-items:center;justify-content:center;}
   .h-stock{text-align:center;}
-
-  /* Select-all checkbox */
   .chk-all{width:18px;height:18px;cursor:pointer;accent-color:var(--accent);}
 
   ul.plist{list-style:none;}
@@ -117,6 +115,7 @@
   .nr-badge.in-stock{color:var(--green);background:var(--green-bg);}
   .desc-col{display:flex;flex-direction:column;gap:.25rem;min-width:0;}
   .desc-text{font-size:.99rem;font-weight:500;line-height:1.4;word-break:break-word;}
+  .model-text{font-size:.7rem;color:var(--muted);line-height:1.3;word-break:break-word;}
   .tags{display:flex;gap:.3rem;flex-wrap:wrap;}
   .tag{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;border-radius:3px;padding:.1rem .3rem;white-space:nowrap;}
   .tag.new{color:var(--green);background:var(--green-bg);}
@@ -142,8 +141,7 @@
   .ibtn{background:none;border:1px solid var(--border);border-radius:5px;cursor:pointer;color:var(--muted);padding:.26rem;display:flex;align-items:center;justify-content:center;transition:color .12s,border-color .12s,background .12s;min-width:28px;min-height:28px;}
   .ibtn:hover.edit-btn{color:var(--orange);border-color:var(--orange);background:var(--orange-bg);}
   .ibtn:hover.del-btn{color:var(--accent);border-color:var(--accent);background:var(--accent-bg);}
-  .ibtn:hover.copy-btn{color:var(--blue);border-color:var(--blue);background:var(--blue-bg);}
-  .ibtn.copied{color:var(--green);border-color:var(--green);background:var(--green-bg);}
+  .ibtn:hover.photo-btn{color:var(--blue);border-color:var(--blue);background:var(--blue-bg);}
 
   /* Edit row */
   .edit-row{display:none;padding:.6rem 1rem .8rem;flex-direction:column;gap:.6rem;background:var(--orange-bg);border-top:1px solid var(--border);}
@@ -211,8 +209,6 @@
   .btn-copy-list:hover{opacity:.85;}
   .btn-print{font-family:'Inter',sans-serif;font-size:.875rem;font-weight:600;padding:.6rem 1.1rem;background:var(--mono-bg);color:var(--text);border:1.5px solid var(--border);border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:.4rem;}
   .btn-print:hover{background:var(--surface2);}
-  .copy-ok{font-size:.8rem;color:var(--green);display:none;align-items:center;gap:.3rem;align-self:center;}
-  .copy-ok.show{display:flex;}
 
   /* Help button */
   .help-btn{margin-left:.5rem;background:none;border:1.5px solid var(--border);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:.78rem;font-weight:600;flex-shrink:0;transition:color .15s,border-color .15s;}
@@ -253,18 +249,16 @@
   .dlg-cancel{font-family:'Inter',sans-serif;font-size:.875rem;padding:.55rem 1rem;background:none;border:1px solid var(--border);border-radius:7px;cursor:pointer;color:var(--text);}
   .dlg-del{font-family:'Inter',sans-serif;font-size:.875rem;font-weight:600;padding:.55rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:7px;cursor:pointer;}
 
-  /* Print styles */
-  @media print{
-    header,main,.add-section,.sw,.legend,.order-bar,.modal-footer,.modal-close,
-    .iactions,.row-chk,.stock-editor,.help-overlay,.del-overlay,#copy-overlay{display:none!important;}
-    .modal-overlay{position:static!important;opacity:1!important;pointer-events:all!important;background:none!important;}
-    .modal{max-height:none!important;border-radius:0!important;transform:none!important;box-shadow:none!important;}
-    .modal-header{border-bottom:2px solid #000;}
-    body{background:#fff!important;color:#000!important;}
-    .order-table td,.order-table th{color:#000!important;border-color:#ccc!important;}
-    .o-nr{color:#000!important;}
-  }
-
+  /* ── FOTO MODAL ── */
+  .foto-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;padding:1rem;}
+  .foto-overlay.show{opacity:1;pointer-events:all;}
+  .foto-header{width:100%;max-width:600px;display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;}
+  .foto-title{color:#fff;font-size:.9rem;font-weight:600;}
+  .foto-sub{color:rgba(255,255,255,.6);font-size:.75rem;margin-top:.15rem;}
+  .foto-close-btn{background:rgba(255,255,255,.15);border:none;cursor:pointer;color:#fff;padding:.5rem;border-radius:8px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+  .foto-close-btn:hover{background:rgba(255,255,255,.25);}
+  .foto-img-wrap{width:100%;max-width:600px;display:flex;align-items:center;justify-content:center;}
+  .foto-img{max-width:100%;max-height:calc(100vh - 10rem);border-radius:10px;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,.5);}
 
   /* Data beheren */
   .data-section{background:var(--surface);border:1.5px dashed var(--border);border-radius:var(--r);overflow:hidden;}
@@ -281,6 +275,18 @@
   .data-msg.ok{color:var(--green);}
   .data-msg.err{color:var(--accent);}
   .data-info{font-size:.78rem;color:var(--muted);line-height:1.5;}
+
+  /* Print styles */
+  @media print{
+    header,main,.add-section,.sw,.legend,.order-bar,.modal-footer,.modal-close,
+    .iactions,.row-chk,.stock-editor,.help-overlay,.del-overlay,#copy-overlay,.foto-overlay{display:none!important;}
+    .modal-overlay{position:static!important;opacity:1!important;pointer-events:all!important;background:none!important;}
+    .modal{max-height:none!important;border-radius:0!important;transform:none!important;box-shadow:none!important;}
+    .modal-header{border-bottom:2px solid #000;}
+    body{background:#fff!important;color:#000!important;}
+    .order-table td,.order-table th{color:#000!important;border-color:#ccc!important;}
+    .o-nr{color:#000!important;}
+  }
 
   @media(max-width:480px){
     .list-hdr{grid-template-columns:32px 1fr 52px;}
@@ -314,7 +320,7 @@
     <div class="htitle">Cennox · Lincsafe</div>
     <div class="hsub">materialen overzicht</div>
   </div>
-  <div class="count-pill"><b id="vis-count">49</b> / <span id="tot-count">49</span></div>
+  <div class="count-pill"><b id="vis-count">226</b> / <span id="tot-count">226</span></div>
   <button class="help-btn" id="help-btn" title="Gebruiksaanwijzing">?</button>
 </header>
 
@@ -356,7 +362,6 @@
       </div>
     </div>
   </div>
-
 
   <div class="data-section">
     <button class="data-toggle" id="data-toggle" aria-expanded="false">
@@ -481,111 +486,57 @@
       </button>
     </div>
     <div class="help-body">
-
       <div class="help-section">
         <div class="help-title">Zoeken</div>
         <div class="help-row">
-          <div class="help-icon">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </div>
-          <div class="help-text">Typ een <b>artikelnummer</b> of een woord uit de <b>omschrijving</b>. De lijst filtert direct mee. Tik op ✕ om de zoekopdracht te wissen.</div>
+          <div class="help-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div class="help-text">Typ een <b>artikelnummer</b> of een woord uit de <b>omschrijving</b>. De lijst filtert direct mee.</div>
         </div>
       </div>
-
       <hr class="help-divider">
-
+      <div class="help-section">
+        <div class="help-title">Foto bekijken</div>
+        <div class="help-row">
+          <div class="help-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="5" r="1" fill="currentColor"/></svg></div>
+          <div class="help-text">Artikelen met een foto hebben een <b>camera-icoon</b> naast het artikelnummer. Tik erop om de foto op volledig scherm te bekijken.</div>
+        </div>
+      </div>
+      <hr class="help-divider">
       <div class="help-section">
         <div class="help-title">Voorraad bijhouden</div>
         <div class="help-row">
-          <div class="help-icon">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="4" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.4"/></svg>
-          </div>
-          <div class="help-text">
-            Tik op het gekleurde getal in de kolom <b>Voorraad</b> om de hoeveelheid in te stellen. Gebruik − / + of typ direct een getal. Bevestig met ✓ of de Enter-toets.<br><br>
-            Kleurcodes:<br>
+          <div class="help-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="4" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.4"/></svg></div>
+          <div class="help-text">Tik op het gekleurde getal in de kolom <b>Voorraad</b> om de hoeveelheid in te stellen.<br><br>
             <span class="help-chip gray">—</span> niet ingesteld &nbsp;
             <span class="help-chip red">0</span> leeg &nbsp;
-            <span class="help-chip orange">1–2</span> laag &nbsp;
-            <span class="help-chip green">3+</span> voldoende
+            <span class="help-chip green">1+</span> op voorraad
           </div>
         </div>
       </div>
-
       <hr class="help-divider">
-
-      <div class="help-section">
-        <div class="help-title">Artikel toevoegen</div>
-        <div class="help-row">
-          <div class="help-icon">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </div>
-          <div class="help-text">Tik op <b>Nieuw materiaal toevoegen</b>, vul het artikelnummer en de omschrijving in en tik op <b>Toevoegen</b>. Eigen artikelen zijn gemarkeerd met <span class="help-chip green">nieuw</span>.</div>
-        </div>
-      </div>
-
-      <hr class="help-divider">
-
-      <div class="help-section">
-        <div class="help-title">Wijzigen &amp; verwijderen</div>
-        <div class="help-row">
-          <div class="help-icon">
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5l2 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="help-text">Tik op het <b>potloodje</b> om een artikel te bewerken (nummer of omschrijving). Tik op het <b>prullenbakje</b> om een artikel te verwijderen. Beide acties werken ook op de standaard artikelen.</div>
-        </div>
-      </div>
-
-      <hr class="help-divider">
-
       <div class="help-section">
         <div class="help-title">Bestellijst maken</div>
         <div class="help-row">
-          <div class="help-icon">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 3h10l-1.5 8H4.5L3 3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="6" cy="14" r="1" fill="currentColor"/><circle cx="11" cy="14" r="1" fill="currentColor"/></svg>
-          </div>
-          <div class="help-text">
-            Selecteer één of meer artikelen via de <b>checkboxes</b> links. Met het vakje in de kolomkop selecteer je alles wat zichtbaar is.<br><br>
-            Tik op <b>Bestellijst</b> in de balk onderin. Stel per artikel het te bestellen aantal in. Gebruik daarna <b>Kopieer lijst</b> (voor e-mail of WhatsApp) of <b>Afdrukken</b>.
-          </div>
+          <div class="help-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 3h10l-1.5 8H4.5L3 3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="6" cy="14" r="1" fill="currentColor"/><circle cx="11" cy="14" r="1" fill="currentColor"/></svg></div>
+          <div class="help-text">Selecteer artikelen via de <b>checkboxes</b>. Tik op <b>Bestellijst</b> onderin om aantallen in te stellen en te versturen.</div>
         </div>
       </div>
-
       <hr class="help-divider">
-
-      <div class="help-section">
-        <div class="help-title">Artikelnummer kopiëren</div>
-        <div class="help-row">
-          <div class="help-icon">
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5" stroke="currentColor" stroke-width="1.5"/></svg>
-          </div>
-          <div class="help-text">Tik op het <b>potlood-icoontje</b> rechts van een artikel om het te bewerken, of op het <b>prullenbak-icoontje</b> om het te verwijderen.</div>
-        </div>
-      </div>
-
-      <hr class="help-divider">
-
       <div class="help-section">
         <div class="help-title">Opslag</div>
         <div class="help-row">
-          <div class="help-icon">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 2v4h6V2M9 2v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M4 10h8M4 13h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-          </div>
-          <div class="help-text">Alle wijzigingen (voorraad, eigen artikelen, bewerkingen) worden automatisch opgeslagen in de browser. De app werkt volledig <b>offline</b> — geen internet nodig.</div>
+          <div class="help-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 2v4h6V2M9 2v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M4 10h8M4 13h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+          <div class="help-text">Alle wijzigingen worden automatisch opgeslagen in de browser. De app werkt volledig <b>offline</b>.</div>
         </div>
       </div>
-
       <hr class="help-divider">
-
       <div class="help-section">
         <div class="help-title">Over deze app</div>
         <div class="help-row">
-          <div class="help-icon">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 14c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-          </div>
+          <div class="help-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 14c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
           <div class="help-text">Gemaakt door <b>Lino Paone</b> (PAOTEC) — <a href="mailto:info@paotec.nl" style="color:var(--accent);">info@paotec.nl</a></div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -602,37 +553,252 @@
   </div>
 </div>
 
+<!-- Foto modal -->
+<div class="foto-overlay" id="foto-overlay">
+  <div class="foto-header">
+    <div>
+      <div class="foto-title" id="foto-title"></div>
+      <div class="foto-sub" id="foto-sub"></div>
+    </div>
+    <button class="foto-close-btn" id="foto-close">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 4l12 12M16 4L4 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="foto-img-wrap">
+    <img class="foto-img" id="foto-img" src="" alt="">
+  </div>
+</div>
+
 <script>
 // ── BASE DATA ─────────────────────────────────────────────────────────────
+// Formaat: [nr, omschrijving, model|null, afbeelding|null]
 const BASE=[
-  [12001,"EBA-40 (head only) refurbish"],[12216,"PCB for new 4.3\" touch screen"],
-  [12595,"Bezel 83/85 Singel note long"],[12606,"Note tray bezoek for BNF"],
-  [13088,"EBA-40 rs232 kabel"],[13201,"Cencon 2000 keypad down"],
-  [13236,"2GB DDR3L-1333 SO Dimm, CT"],[13330,"Smart coin hopper met coin feeder 1EC"],
-  [13365,"Power supply basic"],[13394,"Printer 3 inch (TP830)"],
-  [13398,"7\" inch display / HDMI"],[13416,"Power supply LRS-75-12 (SPT)"],
-  [13577,"4.3\" inch screen with touch"],[13655,"Twin smart coin system met coin feeder EUR"],
-  [13731,"Printer 2 inch"],[13887,"Beugel voor KCAS/BCS"],
-  [13945,"MEI Bunch Feeder"],[13945,"MEI Bunch note feeder (BNF) refurbisch"],
-  [13961,"MEI reader refurbisch"],[13964,"5,8\" inch screen with touch (Lincstation)"],
-  [14001,"MIA Shaker"],[15193,"Cashbox yellow handle 83/85/66 refurbish"],
-  [15229,"USB printerkabel - 1,5 mtr."],[15381,"MIA Conveyor (nieuw MIA) refurbish"],
-  [15448,"Lincstation: Smart coin hopper met coin feeder assembly 1EC refurbished"],
-  [15456,"Coin feeder"],[15457,"Smarthopper"],[15458,"Coinfeeder (jumbo)"],
-  [16246,"4,3 inch screen with touch 2, incl. interf.board"],
-  [16351,"Gecombineerd bedrading haakse HDMI conn."],[16352,"Gecombineerd bedrading met HDMI conn."],
-  [16367,"Opvulstuk scherm 4,3 inch V2"],[16372,"Lincstation: MEI MDR refurbished"],
-  [16377,"Lincstation: MEI kop tbv SCR en MDR refurbished"],
-  [16605,"Ferrite sleeve 22,1x11x32,3 mm"],[16605,"Ferrietkern"],
-  [16961,"Lincstation: MEI SCR refurbished"],[17564,"Printer MIA"],
-  [17597,"SPT: Lade geleiders set t.b.v. Puloon"],
-  [17716,"Secondary Hopper Y-nose tbv twin smart coin system"],
-  [17717,"Master Hopper Y-Nos tbv twin smart coin system"],
-  [17995,"Back-up batterij AS-Rock moederbord"],
-  [90034,"HF Mainboard Basic AS-20-Som KCAS/NGCAS R51 uitvoering"],
-  [90177,"Wittkopp elect lock"],[90193,"HF SD & SSD incl. migratie software"],
-  [90206,"HF SSD incl. KCAS/GCAS V4 software"],[90215,"HF SD incl. KCAS/GCAS V4 software"],
-  [90236,"Magneetschakelaar"],[90274,"Afas slot"],
+  [12001,"EBA-40 (head only) refurbish",null,null],
+  [12216,"PCB for new 4.3\" touch screen",null,null],
+  [12595,"Bezel 83/85 Singel note long",null,null],
+  [12606,"Note tray bezoek for BNF",null,null],
+  [13088,"EBA-40 rs232 kabel",null,null],
+  [13201,"Cencon 2000 keypad down",null,null],
+  [13236,"2GB DDR3L-1333 SO Dimm, CT",null,null],
+  [13330,"Smart coin hopper met coin feeder 1EC",null,null],
+  [13365,"Power supply basic",null,null],
+  [13394,"Printer 3 inch (TP830)",null,null],
+  [13398,"7\" inch display / HDMI",null,null],
+  [13416,"Power supply LRS-75-12 (SPT)",null,null],
+  [13577,"4.3\" inch screen with touch",null,null],
+  [13655,"Twin smart coin system met coin feeder EUR",null,null],
+  [13731,"Printer 2 inch",null,null],
+  [13887,"Beugel voor KCAS/BCS",null,null],
+  [13945,"MEI Bunch Feeder",null,null],
+  [13945,"MEI Bunch note feeder (BNF) refurbisch",null,null],
+  [13961,"MEI reader refurbisch",null,null],
+  [13964,"5,8\" inch screen with touch (Lincstation)",null,null],
+  [14001,"MIA Shaker",null,null],
+  [15193,"Cashbox yellow handle 83/85/66 refurbish",null,null],
+  [15229,"USB printerkabel - 1,5 mtr.",null,null],
+  [15381,"MIA Conveyor (nieuw MIA) refurbish",null,null],
+  [15448,"Lincstation: Smart coin hopper met coin feeder assembly 1EC refurbished",null,null],
+  [15456,"Coin feeder",null,null],
+  [15457,"Smarthopper",null,null],
+  [15458,"Coinfeeder (jumbo)",null,null],
+  [16246,"4,3 inch screen with touch 2, incl. interf.board",null,null],
+  [16351,"Gecombineerd bedrading haakse HDMI conn.",null,null],
+  [16352,"Gecombineerd bedrading met HDMI conn.",null,null],
+  [16367,"Opvulstuk scherm 4,3 inch V2",null,null],
+  [16372,"Lincstation: MEI MDR refurbished",null,null],
+  [16377,"Lincstation: MEI kop tbv SCR en MDR refurbished",null,null],
+  [16605,"Ferrite sleeve 22,1x11x32,3 mm",null,null],
+  [16605,"Ferrietkern",null,null],
+  [16961,"Lincstation: MEI SCR refurbished",null,null],
+  [17564,"Printer MIA",null,null],
+  [17597,"SPT: Lade geleiders set t.b.v. Puloon",null,null],
+  [17716,"Secondary Hopper Y-nose tbv twin smart coin system",null,null],
+  [17717,"Master Hopper Y-Nos tbv twin smart coin system",null,null],
+  [17995,"Back-up batterij AS-Rock moederbord",null,null],
+  [90034,"HF Mainboard Basic AS-20-Som KCAS/NGCAS R51 uitvoering",null,null],
+  [90177,"Wittkopp elect lock",null,null],
+  [90193,"HF SD & SSD incl. migratie software",null,null],
+  [90206,"HF SSD incl. KCAS/GCAS V4 software",null,null],
+  [90215,"HF SD incl. KCAS/GCAS V4 software",null,null],
+  [90236,"Magneetschakelaar",null,null],
+  [90274,"Afas slot",null,null],
+  [60150,"Network Cable UK","OLD PRO SNF","images/60150.jpg"],
+  [60343,"Power supply GST120A12-R7B","OLD PRO SNF","images/60343.jpg"],
+  [60344,"Power supply GST160A24-R7B","OLD PRO SNF","images/60344.jpg"],
+  [60345,"Power supply SD-15B-12","OLD PRO SNF","images/60345.jpg"],
+  [60206,"MEI Reader","OLD PRO BNF, OLD PRO SNF, DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60206.jpg"],
+  [60246,"Cable Rainbow for KABA","OLD PRO BNF, OLD PRO SNF, DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60246.jpg"],
+  [60266,"Door handle black","OLD PRO BNF, OLD PRO SNF, DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60266.jpg"],
+  [60356,"Magnet flat black","OLD PRO BNF, OLD PRO SNF, DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60356.jpg"],
+  [60006,"Cable from contact to door or switch","OLD PRO BNF, OLD PRO SNF, DUO V1 SSU, DUO V1 BNF","images/60006.jpg"],
+  [60080,"Power supply 12V RS-25-12","OLD PRO BNF, OLD PRO SNF, DUO V1 SSU","images/60080.jpg"],
+  [60215,"Cable 45 RJ45 motherboard to network","OLD PRO BNF, OLD PRO SNF, DUO V1 SSU","images/60215.jpg"],
+  [60216,"Cable 46 printer cable 125cm","OLD PRO BNF, OLD PRO SNF, DUO V1 SSU","images/60216.jpg"],
+  [60393,"Cable LED for bezel","OLD PRO BNF, OLD PRO SNF, DUO V1 SSU","images/60393.jpg"],
+  [50013,"Spare cashbox Yellow handle XL 2200","OLD PRO BNF, OLD PRO SNF, DUO V1 BNF, DUO V1 SNF","images/50013.jpg"],
+  [50014,"Spare cashbox green handle 1200","OLD PRO BNF, OLD PRO SNF, DUO V1 BNF, DUO V1 SNF","images/50014.jpg"],
+  [60355,"Magnet reed black","OLD PRO BNF, OLD PRO SNF, DUO V1 BNF, DUO V1 SNF","images/60355.jpg"],
+  [60000,"Cable LCD Pro","OLD PRO BNF, OLD PRO SNF","images/60000.jpg"],
+  [60001,"Cable power supply to motherboard 12V","OLD PRO BNF, OLD PRO SNF","images/60001.jpg"],
+  [60008,"Cable motherboard to break out Pro","OLD PRO BNF, OLD PRO SNF","images/60008.jpg"],
+  [60031,"PC motherboard Pro","OLD PRO BNF, OLD PRO SNF","images/60031.jpg"],
+  [60038,"Compact Flash 8GB","OLD PRO BNF, OLD PRO SNF","images/60038.jpg"],
+  [60040,"Ventilator 40mm","OLD PRO BNF, OLD PRO SNF","images/60040.jpg"],
+  [60043,"Membrame switch","OLD PRO BNF, OLD PRO SNF","images/60043.jpg"],
+  [60044,"PC Housing Bracket","OLD PRO BNF, OLD PRO SNF","images/60044.jpg"],
+  [60050,"Door Switch","OLD PRO BNF, OLD PRO SNF","images/60050.jpg"],
+  [60088,"Blue Cap PRO","OLD PRO BNF, OLD PRO SNF","images/60088.jpg"],
+  [60159,"Black button PRO","OLD PRO BNF, OLD PRO SNF","images/60159.jpg"],
+  [60178,"Note reader 85mm incl Green UK","OLD PRO BNF, OLD PRO SNF","images/60178.jpg"],
+  [60201,"Touch Screen Pro","OLD PRO BNF, OLD PRO SNF","images/60201.jpg"],
+  [60214,"Cable 44, MEI cable","OLD PRO BNF, OLD PRO SNF","images/60214.jpg"],
+  [60242,"Raampje for Touch Pro","OLD PRO BNF, OLD PRO SNF","images/60242.jpg"],
+  [60243,"Blue Cap PRO Touch","OLD PRO BNF, OLD PRO SNF","images/60243.jpg"],
+  [60245,"Cable 48, USB touch PRO","OLD PRO BNF, OLD PRO SNF","images/60245.jpg"],
+  [60250,"Power Supply 24V, RS-100-24","OLD PRO BNF, OLD PRO SNF","images/60250.jpg"],
+  [60252,"Cable 49, Power cable to power supply","OLD PRO BNF, OLD PRO SNF","images/60252.jpg"],
+  [60261,"Blue Cap Lincsafe Pro touch XL","OLD PRO BNF, OLD PRO SNF","images/60261.jpg"],
+  [60340,"Cable Wittkopp smartlock from lock to displaynew pro","OLD PRO BNF, OLD PRO SNF","images/60340.jpg"],
+  [60341,"Cable MEI reader new pro","OLD PRO BNF, OLD PRO SNF","images/60341.jpg"],
+  [60361,"Cable display CAS/PRO compiled","OLD PRO BNF, OLD PRO SNF","images/60361.jpg"],
+  [60381,"Bezel 83/85mm LS Blue","OLD PRO BNF, OLD PRO SNF","images/60381.jpg"],
+  [60421,"Cable Magnet reed Black","OLD PRO BNF, OLD PRO SNF","images/60421.jpg"],
+  [60064,"BNF","OLD PRO BNF, DUO V1 SSU, DUO V1 BNF","images/60064.jpg"],
+  [60066,"Bracket for BNF","OLD PRO BNF, DUO V1 SSU, DUO V1 BNF","images/60066.jpg"],
+  [60067,"Note tray for BNF","OLD PRO BNF, DUO V1 SSU, DUO V1 BNF","images/60067.jpg"],
+  [60211,"Cable 47, LCD cable PRO","OLD PRO BNF","images/60211.jpg"],
+  [60184,"Power supply 12V RS-50-12","DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60184.jpg"],
+  [60274,"Power 24V break out","DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60274.jpg"],
+  [60277,"Cable Power 12V PC","DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60277.jpg"],
+  [60280,"Power supply RSP-200-24","DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60280.jpg"],
+  [60209,"Cable 39, Power supply for Solonoid","DUO V1 SSU","images/60209.jpg"],
+  [60251,"Stackerless MEI reader 83mm","DUO V1 SSU","images/60251.jpg"],
+  [60279,"Cable door contact switch KABA","DUO V1 SSU","images/60279.jpg"],
+  [60286,"Power supply RSP-320-24","DUO V1 SSU","images/60286.jpg"],
+  [60365,"Sealer SSU","DUO V1 SSU","images/60365.jpg"],
+  [60366,"Cable sealer Iteq","DUO V1 SSU","images/60366.jpg"],
+  [60367,"Cable sealer internal Iteq","DUO V1 SSU","images/60367.jpg"],
+  [60368,"Cable power CPU","DUO V1 SSU","images/60368.jpg"],
+  [60369,"Cable printer SSU/DUO 175 cm","DUO V1 SSU","images/60369.jpg"],
+  [60371,"HDMI Cable 1.4 Hig Speed 1.5","DUO V1 SSU","images/60371.jpg"],
+  [60372,"Network cable U/UTP CAT 1.5","DUO V1 SSU","images/60372.jpg"],
+  [60373,"Computerboard for SSU Sealer","DUO V1 SSU","images/60373.jpg"],
+  [60382,"Netwerk cable for M-lock U/UTP","DUO V1 SSU","images/60382.jpg"],
+  [60385,"Cable 7\" LCD Display power cable SSU","DUO V1 SSU","images/60385.jpg"],
+  [60020,"Cable power supply 12V Duo snf","DUO V1 SNF","images/60020.jpg"],
+  [60082,"Power supply 24V","DUO V1 SNF","images/60082.jpg"],
+  [60147,"Cable 24 (door switch)","DUO V1 SNF","images/60147.jpg"],
+  [60208,"Cable 38, Power supply 24V Break out","DUO V1 SNF","images/60208.jpg"],
+  [50006,"Touchscreen DUO refurbisch kit","DUO V1 BNF, DUO V1 SNF","images/50006.jpg"],
+  [60010,"Cable power supply to power entry","DUO V1 BNF, DUO V1 SNF","images/60010.jpg"],
+  [60011,"Cable from power supply to power supply I","DUO V1 BNF, DUO V1 SNF","images/60011.jpg"],
+  [60013,"Cable RJ45 female to RJ45 male length 1m","DUO V1 BNF, DUO V1 SNF","images/60013.jpg"],
+  [60018,"Cable printer Duo Intern","DUO V1 BNF, DUO V1 SNF","images/60018.jpg"],
+  [60062,"Touch panel controller","DUO V1 BNF, DUO V1 SNF","images/60062.jpg"],
+  [60077,"Note reader XL Advance","DUO V1 BNF, DUO V1 SNF","images/60077.jpg"],
+  [60139,"Lock for drofsafe EM3510DX","DUO V1 BNF, DUO V1 SNF","images/60139.jpg"],
+  [60160,"Iron Screen DUO","DUO V1 BNF, DUO V1 SNF","images/60160.jpg"],
+  [60219,"LVDS Cable (1500mm)","DUO V1 BNF, DUO V1 SNF","images/60219.jpg"],
+  [60220,"Data Image 7ïnch TFT","DUO V1 BNF, DUO V1 SNF","images/60220.jpg"],
+  [60244,"Coin validator Pelicano V2","DUO V1 BNF, DUO V1 SNF","images/60244.jpg"],
+  [60267,"Cable drawer switch to break out","DUO V1 BNF, DUO V1 SNF","images/60267.jpg"],
+  [60269,"Power supply to montage plaat","DUO V1 BNF, DUO V1 SNF","images/60269.jpg"],
+  [60270,"Patchstrip to powersupply","DUO V1 BNF, DUO V1 SNF","images/60270.jpg"],
+  [60271,"Power to patchstrip 24V","DUO V1 BNF, DUO V1 SNF","images/60271.jpg"],
+  [60272,"Power to pachtstrip 12V","DUO V1 BNF, DUO V1 SNF","images/60272.jpg"],
+  [60275,"Solenoid cable female","DUO V1 BNF, DUO V1 SNF","images/60275.jpg"],
+  [60402,"HDMI Cable 1.4 Hig Speed Male to Male 3m","DUO V1 BNF, DUO V1 SNF","images/60402.jpg"],
+  [60403,"USB Cable 2.0 Hig Speed Male tot Male 3m","DUO V1 BNF, DUO V1 SNF","images/60403.jpg"],
+  [60262,"4\"3 inch touch screen","BSC II, OLD PRO BNF, OLD PRO SNF","images/60262.jpg"],
+  [60400,"Cable SATA Inline 0,3mm","BSC II","images/60400.jpg"],
+  [50003,"Printer cable for printer","BSC I, BSC II, OLD PRO BNF, OLD PRO SNF, DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/50003.jpg"],
+  [60169,"Mother Board BSC A20-SOM processor","BSC I, BSC II, OLD PRO BNF, OLD PRO SNF","images/60169.jpg"],
+  [60170,"SD Hard Disk incl. Linux","BSC I, BSC II, OLD PRO BNF, OLD PRO SNF","images/60170.jpg"],
+  [60199,"Battery Motherboard","BSC I, BSC II, OLD PRO BNF, OLD PRO SNF","images/60199.jpg"],
+  [60253,"Hard disk cable for BSC board","BSC I, BSC II, OLD PRO BNF, OLD PRO SNF","images/60253.jpg"],
+  [60258,"A20-SOM-CON-R42","BSC I, BSC II, OLD PRO BNF, OLD PRO SNF","images/60258.jpg"],
+  [60230,"Magnetic switch white","BSC I, BSC II, DUO V1 SSU","images/60230.jpg"],
+  [60255,"JCM stacker for BSC EBA-40","BSC I, BSC II","images/60255.jpg"],
+  [60259,"BAT-LIPO1400MAH","BSC I, BSC II","images/60259.jpg"],
+  [60264,"Power Supply BSC GS60A12","BSC I, BSC II","images/60264.jpg"],
+  [60302,"Cable EBA-40 RS-232","BSC I, BSC II","images/60302.jpg"],
+  [60304,"Cable LCD Olimex","BSC I, BSC II","images/60304.jpg"],
+  [60322,"Cable CAS wittkopp Smartlock","BSC I, BSC II","images/60322.jpg"],
+  [60303,"Cable Wittkopp RS-232","BSC I","images/60303.jpg"],
+  [60068,"Bezel 83/85 short with LED","Box <2019 , OLD PRO SNF","images/60068.jpg"],
+  [60035,"RAM memory 2GB Pro Duo","Box <2019 , OLD PRO BNF, OLD PRO SNF, DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60035.jpg"],
+  [50004,"Spare cashbox yellow handle 1200","Box <2019 , OLD PRO BNF, OLD PRO SNF, DUO V1 BNF, DUO V1 SNF","images/50004.jpg"],
+  [50010,"Sealbag for Green handle","Box <2019 , OLD PRO BNF, OLD PRO SNF, DUO V1 BNF, DUO V1 SNF","images/50010.jpg"],
+  [60074,"Note reader 83mm incl Yellow","Box <2019 , OLD PRO BNF, OLD PRO SNF, DUO V1 BNF, DUO V1 SNF","images/60074.jpg"],
+  [60152,"Break out board Pro","Box <2019 , OLD PRO BNF, OLD PRO SNF","images/60152.jpg"],
+  [60263,"Coin Validator NRI G13","Box <2019 , OLD PRO BNF, OLD PRO SNF","images/60263.jpg"],
+  [60337,"Netwerkkabel CAT5E UTP, 1m","Box <2019 , OLD PRO BNF, OLD PRO SNF","images/60337.jpg"],
+  [60014,"Cable motherboard to break out Duo","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60014.jpg"],
+  [60032,"PC motherboard Duo","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF",null],
+  [60053,"Break out board DUO","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60053.jpg"],
+  [60268,"MEI cable DUO MP","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60268.jpg"],
+  [60321,"Display 7inch HDMI","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60321.jpg"],
+  [60336,"Nework connector Box","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60336.jpg"],
+  [60359,"C14 netintreder","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60359.jpg"],
+  [60408,"Motherboard IMB / AS Rock","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60408.jpg"],
+  [60409,"2GB memory DDR3 / AS Rock","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60409.jpg"],
+  [60410,"32GB mSata / AS Rock","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60410.jpg"],
+  [60416,"Cable Printer 175cm / AS Rock","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60416.jpg"],
+  [60417,"Cable USB mother board to break out / AS Rock","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60417.jpg"],
+  [60422,"Cable Power Linux PRO","Box <2019 , DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60422.jpg"],
+  [60278,"Cable 12V RFID","Box <2019 , DUO V1 SSU","images/60278.jpg"],
+  [60360,"USB touch cable 1.8 metre male","Box <2019 , DUO V1 SSU","images/60360.jpg"],
+  [60109,"Network cable","Box <2019 , BSC I, BSC II, OLD PRO BNF, OLD PRO SNF, DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60109.jpg"],
+  [60137,"Cable 27 (machine power chord)","Box <2019 , BSC I, BSC II, OLD PRO BNF, OLD PRO SNF, DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60137.jpg"],
+  [60161,"SSD hard disk","Box <2019 , BSC I, BSC II, OLD PRO BNF, OLD PRO SNF, DUO V1 SSU, DUO V1 BNF, DUO V1 SNF","images/60161.jpg"],
+  [60146,"Cable 23 (12V internal)","Box <2019","images/60146.jpg"],
+  [60324,"Built in printer 3inch","Box <2019","images/60324.jpg"],
+  [60325,"Cable for built in printer 3inch","Box <2019","images/60325.jpg"],
+  [60329,"Power Supply RSP-200-12","Box <2019","images/60329.jpg"],
+  [60333,"Cable Sata floppy 0.40 meter","Box <2019","images/60333.jpg"],
+  [60334,"\"Druktoets\" box","Box <2019","images/60334.jpg"],
+  [60335,"HDMI cable 1.4 Hig Speed 1m","Box <2019","images/60335.jpg"],
+  [60376,"solonoid 12V (N)","Box <2019","images/60376.jpg"],
+  [60386,"Cable 7\" LCD Display power cable BOX","Box <2019","images/60386.jpg"],
+  [60398,"Cover flap built in printer 3inch","Box <2019","images/60398.jpg"],
+  [60418,"Cable EMX to AS-Rock converter","Box <2019","images/60418.jpg"],
+  [60056,"Magnetic doorswitch",null,"images/60056.jpg"],
+  [60061,"VGA Cable for driver board",null,"images/60061.jpg"],
+  [60110,"VGA Monitor Cable",null,"images/60110.jpg"],
+  [60212,"Cable 42, LCD cable pro XL",null,"images/60212.jpg"],
+  [60273,"Motherboard to break out",null,"images/60273.jpg"],
+  [60276,"Cable CC talk",null,"images/60276.jpg"],
+  [60287,"Lock for coin module Pro",null,"images/60287.jpg"],
+  [60298,"CC talk internal cable Coin (coin to break out)",null,"images/60298.jpg"],
+  [60299,"USB cable Coin",null,"images/60299.jpg"],
+  [60300,"CC talk External cable coin (board to coin)",null,"images/60300.jpg"],
+  [60308,"Cable breakout to side safe switches",null,"images/60308.jpg"],
+  [60309,"Cable SSU internal",null,"images/60309.jpg"],
+  [60310,"Cable SSU External",null,"images/60310.jpg"],
+  [60342,"Cable M-Locks EFR",null,"images/60342.jpg"],
+  [60380,"Draai hendel zilver",null,"images/60380.jpg"],
+  [60429,"Cable power XLR 12 Volt",null,"images/60429.png"],
+  [60432,"Opvulstuk scherm 4\"3 inch",null,"images/60432.png"],
+  [60433,"CCtalk cable Pelicano",null,"images/60433.png"],
+  [60434,"Cable Door DUO assy",null,"images/60434.png"],
+  [60435,"Cable box ASrock to breakout pro",null,"images/60435.png"],
+  [60436,"Cable ASrock to breakout pro",null,"images/60436.png"],
+  [60437,"Cable button box",null,"images/60437.png"],
+  [60438,"Cable data built-in printer box v2",null,"images/60438.png"],
+  [60439,"Cable built-in printer box Power",null,"images/60439.png"],
+  [60441,"Cable power XLR 12volt Box",null,"images/60441.png"],
+  [60442,"Cable reedcontact bos lower door & drawer",null,"images/60442.png"],
+  [60443,"Cable reedcontact cable box MEI door V2",null,"images/60443.png"],
+  [60444,"Cable solonoid box drawer (Long)",null,"images/60444.png"],
+  [60445,"Cable solonoid box lower door (short)",null,"images/60445.png"],
+  [60446,"Cable solonoid emergency release steel",null,"images/60446.png"],
+  [60447,"Cable break out coin cc Talk NRI G13",null,"images/60447.png"],
+  [60448,"Cable power PRO/CAS BNF 24V",null,"images/60448.png"],
+  [60450,"Cable MEI reader pro 12V",null,null],
+  [60451,"Cable MEI reader pro 24V",null,null],
+  [60452,"Reset button AS-rock",null,null],
+  [60453,"Cable reset button AS-rock",null,null],
+  [50030,"12 volt power supply incl. XLR",null,"images/50030.jpg"]
 ];
 
 // ── STORAGE ───────────────────────────────────────────────────────────────
@@ -649,19 +815,19 @@ let store=loadStore();
 
 // ── STATE ─────────────────────────────────────────────────────────────────
 let editingId=null, stockEditId=null;
-let selected=new Set();  // Set of part ids
+let selected=new Set();
 
 // ── PARTS ─────────────────────────────────────────────────────────────────
 function allParts(){
-  const base=BASE.map(([nr,desc],i)=>{
+  const base=BASE.map(([nr,desc,model,img],i)=>{
     const id='b'+i;
     if(store.deleted.includes(id))return null;
     const e=store.edits[id];
-    return{id,nr:e?e.nr:nr,desc:e?e.desc:desc,custom:false,edited:!!e};
+    return{id,nr:e?e.nr:nr,desc:e?e.desc:desc,model:model||null,img:img||null,custom:false,edited:!!e};
   }).filter(Boolean);
   const custom=store.custom
     .filter(p=>!store.deleted.includes(p.id))
-    .map(p=>{const e=store.edits[p.id];return{id:p.id,nr:e?e.nr:p.nr,desc:e?e.desc:p.desc,custom:true,edited:!!e};});
+    .map(p=>{const e=store.edits[p.id];return{id:p.id,nr:e?e.nr:p.nr,desc:e?e.desc:p.desc,model:null,img:null,custom:true,edited:!!e};});
   return[...base,...custom].sort((a,b)=>a.nr-b.nr);
 }
 function getStock(id){const v=store.stock[id];return(typeof v==='number')?v:null;}
@@ -673,10 +839,10 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function hl(text,q){if(!q)return esc(text);return esc(text).replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>');}
 function fmtDate(){const d=new Date();return d.toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit',year:'numeric'});}
 
-const ICON_COPY =`<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5" stroke="currentColor" stroke-width="1.5"/></svg>`;
-const ICON_CHECK=`<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const ICON_EDIT =`<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5l2 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
 const ICON_TRASH=`<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V3h4v1M5 4l.5 9h5L11 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const ICON_PHOTO=`<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="2.3" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="5.5" r=".9" fill="currentColor"/></svg>`;
+const ICON_CHECK=`<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 // ── RENDER ────────────────────────────────────────────────────────────────
 const plist   =document.getElementById('plist');
@@ -704,7 +870,7 @@ function render(){
   const q=searchEl.value.trim().toLowerCase();
   const parts=allParts();
   totCnt.textContent=parts.length;
-  const shown=q?parts.filter(p=>String(p.nr).includes(q)||p.desc.toLowerCase().includes(q)):parts;
+  const shown=q?parts.filter(p=>String(p.nr).includes(q)||p.desc.toLowerCase().includes(q)||(p.model&&p.model.toLowerCase().includes(q))):parts;
   visCnt.textContent=shown.length;
   noRes.style.display=shown.length===0?'block':'none';
   if(!shown.length)noQ.textContent=searchEl.value.trim();
@@ -720,19 +886,23 @@ function render(){
       p.custom?'<span class="tag new">nieuw</span>':'',
       p.edited?'<span class="tag edited">gewijzigd</span>':'',
     ].join('');
+    const photoBtn=p.img?`<button class="ibtn photo-btn" data-img="${esc(p.img)}" data-nr="${p.nr}" data-desc="${esc(p.desc)}" title="Foto bekijken">${ICON_PHOTO}</button>`:'';
+    const modelLine=p.model?`<span class="model-text">${esc(p.model)}</span>`:'';
     return`
-    <li class="pitem${isEditing?' editing':''}${isSel?' selected':''}" data-id="${esc(p.id)}">
+    <li class="pitem${isEditing?' editing':''} ${isSel?' selected':''}" data-id="${esc(p.id)}">
       <div class="prow">
-        <div class="row-chk"><input type="checkbox" class="row-checkbox" data-id="${esc(p.id)}"${isSel?' checked':''}></div>
+        <div class="row-chk"><input type="checkbox" class="row-checkbox" data-id="${esc(p.id)}"${isSel?' checked':''} ></div>
         <div class="desc-col">
           <div class="nr-row">
             <span class="nr-badge${sc==='s-ok'?' in-stock':''}">${hl(String(p.nr),q)}</span>
             <div class="iactions">
+              ${photoBtn}
               <button class="ibtn edit-btn" data-id="${esc(p.id)}">${ICON_EDIT}</button>
               <button class="ibtn del-btn" data-id="${esc(p.id)}" data-nr="${p.nr}" data-desc="${esc(p.desc)}">${ICON_TRASH}</button>
             </div>
           </div>
           <span class="desc-text">${hl(p.desc,q)}</span>
+          ${modelLine}
           ${tags?`<div class="tags">${tags}</div>`:''}
         </div>
         <div class="stock-col${isStockEdit?' active':''}" data-id="${esc(p.id)}">
@@ -776,6 +946,22 @@ function commitStock(id,col){
   store.stock[id]=v;saveStore();stockEditId=null;render();
 }
 
+// ── FOTO MODAL ────────────────────────────────────────────────────────────
+const fotoOverlay=document.getElementById('foto-overlay');
+const fotoImg    =document.getElementById('foto-img');
+const fotoTitle  =document.getElementById('foto-title');
+const fotoSub    =document.getElementById('foto-sub');
+document.getElementById('foto-close').addEventListener('click',()=>fotoOverlay.classList.remove('show'));
+fotoOverlay.addEventListener('click',e=>{if(e.target===fotoOverlay)fotoOverlay.classList.remove('show');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')fotoOverlay.classList.remove('show');});
+
+function openFoto(img,nr,desc){
+  fotoImg.src=img;
+  fotoTitle.textContent=nr+' — '+desc;
+  fotoSub.textContent=img.split('/').pop();
+  fotoOverlay.classList.add('show');
+}
+
 // ── LIST EVENTS ───────────────────────────────────────────────────────────
 plist.addEventListener('change',e=>{
   const cb=e.target.closest('.row-checkbox');
@@ -795,8 +981,8 @@ plist.addEventListener('click',e=>{
   const sok=e.target.closest('.s-ok-btn');
   if(sok){commitStock(sok.dataset.id,sok.closest('.stock-col'));return;}
 
-  const copyBtn=e.target.closest('.copy-btn');
-  if(copyBtn){navigator.clipboard.writeText(copyBtn.dataset.nr).then(()=>{copyBtn.classList.add('copied');copyBtn.innerHTML=ICON_CHECK;setTimeout(()=>{copyBtn.classList.remove('copied');copyBtn.innerHTML=ICON_COPY;},1400);}).catch(()=>{});return;}
+  const photoBtn=e.target.closest('.photo-btn');
+  if(photoBtn){openFoto(photoBtn.dataset.img,photoBtn.dataset.nr,photoBtn.dataset.desc);return;}
 
   const editBtn=e.target.closest('.edit-btn');
   if(editBtn){editingId=editingId===editBtn.dataset.id?null:editBtn.dataset.id;stockEditId=null;render();return;}
@@ -850,9 +1036,7 @@ document.getElementById('btn-clear-sel').addEventListener('click',()=>{selected.
 document.getElementById('btn-order').addEventListener('click',()=>{
   const parts=allParts().filter(p=>selected.has(p.id));
   if(!parts.length)return;
-
   document.getElementById('order-meta').textContent=`Datum: ${fmtDate()} · ${parts.length} artikel(en)`;
-
   document.getElementById('order-tbody').innerHTML=parts.map(p=>{
     return`<tr data-id="${esc(p.id)}">
       <td class="o-nr">${esc(String(p.nr))}</td>
@@ -860,7 +1044,6 @@ document.getElementById('btn-order').addEventListener('click',()=>{
       <td class="o-qty"><input type="number" min="1" max="999" value="1" inputmode="numeric" class="qty-input"></td>
     </tr>`;
   }).join('');
-
   modalOverlay.classList.add('show');
 });
 
@@ -868,10 +1051,8 @@ document.getElementById('btn-order').addEventListener('click',()=>{
 const modalOverlay=document.getElementById('modal-overlay');
 document.getElementById('modal-close').addEventListener('click',()=>modalOverlay.classList.remove('show'));
 modalOverlay.addEventListener('click',e=>{if(e.target===modalOverlay)modalOverlay.classList.remove('show');});
-
 document.getElementById('btn-print').addEventListener('click',()=>window.print());
 
-// Copy-text modal logic
 const copyOverlay=document.getElementById('copy-overlay');
 const closeCopyModal=()=>copyOverlay.classList.remove('show');
 document.getElementById('copy-modal-close').addEventListener('click',closeCopyModal);
@@ -902,21 +1083,13 @@ document.getElementById('btn-email-list').addEventListener('click',()=>{
     body+=`  Bestellen: ${qty}\n\n`;
   });
   body+=`${'─'.repeat(40)}\nPAOTEC — Via Regia 138-E, 6217 JX Maastricht`;
-
-  // Mobile: use native share sheet. Desktop: show copy-text modal.
   const isMobile=('ontouchstart' in window)||(navigator.maxTouchPoints>0);
   if(isMobile&&navigator.share){
-    navigator.share({title,text:body}).catch(()=>{
-      // share failed/cancelled — no action needed
-    });
+    navigator.share({title,text:body}).catch(()=>{});
   } else {
     document.getElementById('copy-textarea').value=body;
     copyOverlay.classList.add('show');
-    // auto-select the text so user can immediately Ctrl+A / Ctrl+C
-    setTimeout(()=>{
-      const ta=document.getElementById('copy-textarea');
-      ta.focus();ta.select();
-    },150);
+    setTimeout(()=>{const ta=document.getElementById('copy-textarea');ta.focus();ta.select();},150);
   }
 });
 
@@ -938,46 +1111,25 @@ delOverlay.addEventListener('click',e=>{if(e.target===delOverlay){delOverlay.cla
 const dataToggle=document.getElementById('data-toggle');
 const dataForm=document.getElementById('data-form');
 const dataMsg=document.getElementById('data-msg');
-
 dataToggle.addEventListener('click',()=>{
   const open=dataToggle.getAttribute('aria-expanded')==='true';
   dataToggle.setAttribute('aria-expanded',String(!open));
   dataForm.classList.toggle('open',!open);
 });
-
-function showDataMsg(txt,type){
-  dataMsg.textContent=txt;dataMsg.className='data-msg '+type;
-  if(type==='ok')setTimeout(()=>{dataMsg.textContent='';dataMsg.className='data-msg';},3000);
-}
-
+function showDataMsg(txt,type){dataMsg.textContent=txt;dataMsg.className='data-msg '+type;if(type==='ok')setTimeout(()=>{dataMsg.textContent='';dataMsg.className='data-msg';},3000);}
 document.getElementById('btn-export').addEventListener('click',()=>{
   const parts=allParts();
-  const artikelen=parts.map(p=>{
-    const v=getStock(p.id);
-    return{nr:p.nr,omschrijving:p.desc,voorraad:v,bron:p.custom?'eigen':'standaard'};
-  });
-  const exportData={
-    app:'Lincsafe Materialen',
-    versie:2,
-    datum:new Date().toISOString().slice(0,10),
-    artikelen,
-    store
-  };
+  const artikelen=parts.map(p=>{const v=getStock(p.id);return{nr:p.nr,omschrijving:p.desc,voorraad:v,bron:p.custom?'eigen':'standaard'};});
+  const exportData={app:'Lincsafe Materialen',versie:2,datum:new Date().toISOString().slice(0,10),artikelen,store};
   const data=JSON.stringify(exportData,null,2);
   const blob=new Blob([data],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  const datum=new Date().toISOString().slice(0,10);
-  a.href=url;a.download=`lincsafe-backup-${datum}.json`;
-  document.body.appendChild(a);a.click();
-  document.body.removeChild(a);URL.revokeObjectURL(url);
+  a.href=url;a.download=`lincsafe-backup-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
   showDataMsg('✓ Back-up gedownload','ok');
 });
-
-document.getElementById('btn-import').addEventListener('click',()=>{
-  document.getElementById('import-file').click();
-});
-
+document.getElementById('btn-import').addEventListener('click',()=>{document.getElementById('import-file').click();});
 document.getElementById('import-file').addEventListener('change',e=>{
   const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
@@ -985,17 +1137,13 @@ document.getElementById('import-file').addEventListener('change',e=>{
     try{
       const data=JSON.parse(ev.target.result);
       if(typeof data!=='object'||Array.isArray(data))throw new Error('Ongeldig formaat');
-      // Versie 2 slaat store op onder data.store; versie 1 had alles op top-niveau
       const src=(data.versie>=2&&data.store&&typeof data.store==='object')?data.store:data;
       store.deleted=Array.isArray(src.deleted)?src.deleted:store.deleted;
       store.edits=typeof src.edits==='object'&&!Array.isArray(src.edits)?src.edits:store.edits;
       store.custom=Array.isArray(src.custom)?src.custom:store.custom;
       store.stock=typeof src.stock==='object'&&!Array.isArray(src.stock)?src.stock:store.stock;
-      saveStore();render();
-      showDataMsg('✓ Data succesvol geïmporteerd','ok');
-    }catch{
-      showDataMsg('Fout: ongeldig back-upbestand','err');
-    }
+      saveStore();render();showDataMsg('✓ Data succesvol geïmporteerd','ok');
+    }catch{showDataMsg('Fout: ongeldig back-upbestand','err');}
     e.target.value='';
   };
   reader.readAsText(file);
@@ -1018,7 +1166,6 @@ const addForm=document.getElementById('add-form');
 const aNr=document.getElementById('a-nr');
 const aDesc=document.getElementById('a-desc');
 const fmsg=document.getElementById('fmsg');
-
 addToggle.addEventListener('click',()=>{
   const open=addToggle.getAttribute('aria-expanded')==='true';
   addToggle.setAttribute('aria-expanded',String(!open));

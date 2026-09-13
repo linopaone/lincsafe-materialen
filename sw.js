@@ -1,5 +1,6 @@
-const CACHE = 'lincsafe-v3';
-const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const CACHE = 'lincsafe-v4';
+const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png',
+  './icon-192-maskable.png', './icon-512-maskable.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
@@ -23,6 +24,19 @@ self.addEventListener('fetch', e => {
       fetch(e.request)
         .then(r => { caches.open(CACHE).then(c => c.put(e.request, r.clone())); return r; })
         .catch(() => caches.match(e.request).then(r => r || caches.match('./index.html')))
+    );
+    return;
+  }
+  // Afbeeldingen uit de images/ map: cache-first, bij miss ophalen en cachen.
+  if (e.request.url.includes('/images/')) {
+    e.respondWith(
+      caches.match(e.request).then(r => {
+        if (r) return r;
+        return fetch(e.request).then(nr => {
+          caches.open(CACHE).then(c => c.put(e.request, nr.clone()));
+          return nr;
+        }).catch(() => new Response('', { status: 404 }));
+      })
     );
     return;
   }
