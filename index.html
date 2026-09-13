@@ -142,6 +142,19 @@
   .ibtn:hover.edit-btn{color:var(--orange);border-color:var(--orange);background:var(--orange-bg);}
   .ibtn:hover.del-btn{color:var(--accent);border-color:var(--accent);background:var(--accent-bg);}
 
+  /* Photo upload (edit row) */
+  .photo-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-top:.15rem;}
+  .edit-thumb{width:52px;height:52px;object-fit:cover;border-radius:6px;border:1.5px solid var(--border);flex-shrink:0;}
+  .btn-upload-photo{font-family:'Inter',sans-serif;font-size:.75rem;font-weight:500;padding:.38rem .7rem;background:var(--blue-bg);color:var(--blue);border:1.5px solid var(--blue);border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem;transition:opacity .15s;}
+  .btn-upload-photo:hover{opacity:.8;}
+  .btn-rm-photo{font-family:'Inter',sans-serif;font-size:.72rem;padding:.35rem .65rem;background:none;color:var(--muted);border:1.5px solid var(--border);border-radius:6px;cursor:pointer;transition:color .12s,border-color .12s;}
+  .btn-rm-photo:hover{color:var(--accent);border-color:var(--accent);}
+  /* Add form photo */
+  .add-photo-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+  #add-photo-preview{width:52px;height:52px;object-fit:cover;border-radius:6px;border:1.5px solid var(--border);display:none;flex-shrink:0;}
+  #btn-rm-add-photo{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.1rem;padding:.2rem;line-height:1;display:none;}
+  #btn-rm-add-photo:hover{color:var(--accent);}
+
   /* Thumbnail kolom */
   .thumb-col{display:flex;align-items:center;justify-content:center;}
   .p-thumb{width:64px;height:64px;object-fit:cover;border-radius:6px;border:1.5px solid var(--border);cursor:pointer;display:block;transition:border-color .15s,transform .15s;background:var(--surface2);}
@@ -359,6 +372,15 @@
           <input type="text" id="a-desc" placeholder="bv. Printerkabel 2 mtr." maxlength="200" autocomplete="off">
         </div>
       </div>
+      <div class="add-photo-row">
+        <label class="btn-upload-photo">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="2.3" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="5.5" r=".9" fill="currentColor"/></svg>
+          Foto toevoegen (optioneel)
+          <input type="file" accept="image/*" id="a-photo" style="display:none">
+        </label>
+        <img id="add-photo-preview" alt="preview">
+        <button id="btn-rm-add-photo" type="button" title="Foto verwijderen">✕</button>
+      </div>
       <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
         <div class="fmsg" id="fmsg"></div>
         <button class="btn-add" id="btn-add">
@@ -376,7 +398,7 @@
       <svg class="arr" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
     <div class="data-form" id="data-form">
-      <div class="data-info">Exporteer je voorraad en eigen artikelen als back-upbestand. Importeer het bestand op een ander apparaat of na een herinstallatie.</div>
+      <div class="data-info">Exporteer je voorraad, eigen artikelen én eigen foto's als back-upbestand. Importeer het bestand op een ander apparaat of na een herinstallatie.</div>
       <div class="data-btns">
         <button class="btn-export" id="btn-export">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -808,6 +830,54 @@ const BASE=[
   [50030,"12 volt power supply incl. XLR",null,"images/50030.jpg"]
 ];
 
+// ── PHOTO DB (IndexedDB) ──────────────────────────────────────────────────
+let photoDB=null;
+const userPhotos={};  // id -> blob URL
+
+function openPhotoDB(){
+  return new Promise(res=>{
+    const r=indexedDB.open('lincsafe-photos',1);
+    r.onupgradeneeded=e=>e.target.result.createObjectStore('photos');
+    r.onsuccess=e=>{photoDB=e.target.result;res();};
+    r.onerror=()=>res();
+  });
+}
+function loadAllUserPhotos(){
+  return new Promise(res=>{
+    if(!photoDB)return res();
+    const tx=photoDB.transaction('photos','readonly');
+    const req=tx.objectStore('photos').openCursor();
+    req.onsuccess=e=>{
+      const c=e.target.result;
+      if(c){
+        if(userPhotos[c.key])URL.revokeObjectURL(userPhotos[c.key]);
+        userPhotos[c.key]=URL.createObjectURL(c.value);
+        c.continue();
+      }else res();
+    };
+    req.onerror=()=>res();
+  });
+}
+function saveUserPhoto(id,file){
+  return new Promise(res=>{
+    if(userPhotos[id])URL.revokeObjectURL(userPhotos[id]);
+    userPhotos[id]=URL.createObjectURL(file);
+    if(!photoDB)return res();
+    const tx=photoDB.transaction('photos','readwrite');
+    tx.objectStore('photos').put(file,id);
+    tx.oncomplete=res; tx.onerror=res;
+  });
+}
+function deleteUserPhoto(id){
+  return new Promise(res=>{
+    if(userPhotos[id]){URL.revokeObjectURL(userPhotos[id]);delete userPhotos[id];}
+    if(!photoDB)return res();
+    const tx=photoDB.transaction('photos','readwrite');
+    tx.objectStore('photos').delete(id);
+    tx.oncomplete=res; tx.onerror=res;
+  });
+}
+
 // ── STORAGE ───────────────────────────────────────────────────────────────
 const SK='lincsafe_v2';
 function loadStore(){
@@ -830,7 +900,7 @@ function allParts(){
     const id='b'+i;
     if(store.deleted.includes(id))return null;
     const e=store.edits[id];
-    return{id,nr:e?e.nr:nr,desc:e?e.desc:desc,model:model||null,img:img||null,custom:false,edited:!!e};
+    return{id,nr:e?e.nr:nr,desc:e?e.desc:desc,model:model||null,img:userPhotos[id]||img||null,custom:false,edited:!!e};
   }).filter(Boolean);
   const custom=store.custom
     .filter(p=>!store.deleted.includes(p.id))
@@ -932,6 +1002,15 @@ function render(){
             <input class="e-desc" type="text" value="${esc(p.desc)}" maxlength="200" autocomplete="off">
           </div>
         </div>
+        <div class="photo-row">
+          ${p.img?`<img class="edit-thumb" src="${esc(p.img)}" alt="">`:''}
+          <label class="btn-upload-photo">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="2.3" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="5.5" r=".9" fill="currentColor"/></svg>
+            ${p.img?'Foto wijzigen':'Foto toevoegen'}
+            <input type="file" accept="image/*" class="photo-file-input" data-id="${esc(p.id)}" style="display:none">
+          </label>
+          ${userPhotos[p.id]?`<button class="btn-rm-photo" data-id="${esc(p.id)}">Verwijderen</button>`:''}
+        </div>
         <div class="eactions">
           <button class="btn-cancel cancel-btn">Annuleren</button>
           <button class="btn-save save-btn" data-id="${esc(p.id)}">Opslaan</button>
@@ -990,6 +1069,9 @@ plist.addEventListener('click',e=>{
   const photoBtn=e.target.closest('.photo-btn');
   if(photoBtn){openFoto(photoBtn.dataset.img,photoBtn.dataset.nr,photoBtn.dataset.desc);return;}
 
+  const rmPhoto=e.target.closest('.btn-rm-photo');
+  if(rmPhoto){deleteUserPhoto(rmPhoto.dataset.id).then(()=>render());return;}
+
   const editBtn=e.target.closest('.edit-btn');
   if(editBtn){editingId=editingId===editBtn.dataset.id?null:editBtn.dataset.id;stockEditId=null;render();return;}
 
@@ -1026,6 +1108,13 @@ plist.addEventListener('keydown',e=>{
   if(!editingId)return;
   if(e.key==='Escape'){editingId=null;render();}
   if(e.key==='Enter')plist.querySelector('.save-btn')?.click();
+});
+
+// ── PHOTO FILE INPUT (edit row) ───────────────────────────────────────────
+plist.addEventListener('change',e=>{
+  const fi=e.target.closest('.photo-file-input');
+  if(!fi||!fi.files[0])return;
+  saveUserPhoto(fi.dataset.id,fi.files[0]).then(()=>render());
 });
 
 // ── SELECT ALL ────────────────────────────────────────────────────────────
@@ -1123,23 +1212,49 @@ dataToggle.addEventListener('click',()=>{
   dataForm.classList.toggle('open',!open);
 });
 function showDataMsg(txt,type){dataMsg.textContent=txt;dataMsg.className='data-msg '+type;if(type==='ok')setTimeout(()=>{dataMsg.textContent='';dataMsg.className='data-msg';},3000);}
-document.getElementById('btn-export').addEventListener('click',()=>{
+
+// Hulpfuncties voor foto backup
+function blobToBase64(blob){return new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(blob);});}
+function base64ToBlob(dataURL){const[hdr,b64]=dataURL.split(',');const mime=hdr.match(/:(.*?);/)[1];const bytes=atob(b64);const arr=new Uint8Array(bytes.length);for(let i=0;i<bytes.length;i++)arr[i]=bytes.charCodeAt(i);return new Blob([arr],{type:mime});}
+function getAllPhotosForExport(){
+  return new Promise(res=>{
+    if(!photoDB)return res({});
+    const entries=[];
+    const tx=photoDB.transaction('photos','readonly');
+    const req=tx.objectStore('photos').openCursor();
+    req.onsuccess=e=>{
+      const c=e.target.result;
+      if(c){entries.push({key:c.key,blob:c.value});c.continue();}
+      else Promise.all(entries.map(({key,blob})=>blobToBase64(blob).then(b64=>({key,b64})))).then(results=>{
+        const photos={};results.forEach(({key,b64})=>photos[key]=b64);res(photos);
+      });
+    };
+    req.onerror=()=>res({});
+  });
+}
+
+document.getElementById('btn-export').addEventListener('click',async()=>{
+  showDataMsg('Bezig met exporteren…','');
+  const photos=await getAllPhotosForExport();
+  const fotoCount=Object.keys(photos).length;
   const parts=allParts();
   const artikelen=parts.map(p=>{const v=getStock(p.id);return{nr:p.nr,omschrijving:p.desc,voorraad:v,bron:p.custom?'eigen':'standaard'};});
-  const exportData={app:'Lincsafe Materialen',versie:2,datum:new Date().toISOString().slice(0,10),artikelen,store};
-  const data=JSON.stringify(exportData,null,2);
+  const exportData={app:'Lincsafe Materialen',versie:3,datum:new Date().toISOString().slice(0,10),artikelen,store,photos};
+  const data=JSON.stringify(exportData);
   const blob=new Blob([data],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;a.download=`lincsafe-backup-${new Date().toISOString().slice(0,10)}.json`;
   document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
-  showDataMsg('✓ Back-up gedownload','ok');
+  showDataMsg(`✓ Back-up gedownload (${fotoCount} foto${fotoCount===1?'':'s'} meegenomen)`,'ok');
 });
+
 document.getElementById('btn-import').addEventListener('click',()=>{document.getElementById('import-file').click();});
 document.getElementById('import-file').addEventListener('change',e=>{
   const file=e.target.files[0];if(!file)return;
+  showDataMsg('Bezig met importeren…','');
   const reader=new FileReader();
-  reader.onload=ev=>{
+  reader.onload=async ev=>{
     try{
       const data=JSON.parse(ev.target.result);
       if(typeof data!=='object'||Array.isArray(data))throw new Error('Ongeldig formaat');
@@ -1148,7 +1263,18 @@ document.getElementById('import-file').addEventListener('change',e=>{
       store.edits=typeof src.edits==='object'&&!Array.isArray(src.edits)?src.edits:store.edits;
       store.custom=Array.isArray(src.custom)?src.custom:store.custom;
       store.stock=typeof src.stock==='object'&&!Array.isArray(src.stock)?src.stock:store.stock;
-      saveStore();render();showDataMsg('✓ Data succesvol geïmporteerd','ok');
+      saveStore();
+      // Foto's importeren
+      let fotoCount=0;
+      if(data.photos&&typeof data.photos==='object'){
+        for(const[id,dataURL]of Object.entries(data.photos)){
+          if(typeof dataURL==='string'&&dataURL.startsWith('data:')){
+            try{await saveUserPhoto(id,base64ToBlob(dataURL));fotoCount++;}catch{}
+          }
+        }
+      }
+      render();
+      showDataMsg(`✓ Geïmporteerd${fotoCount?` (${fotoCount} foto${fotoCount===1?'':'s'})`:''}`, 'ok');
     }catch{showDataMsg('Fout: ongeldig back-upbestand','err');}
     e.target.value='';
   };
@@ -1171,26 +1297,53 @@ const addToggle=document.getElementById('add-toggle');
 const addForm=document.getElementById('add-form');
 const aNr=document.getElementById('a-nr');
 const aDesc=document.getElementById('a-desc');
+const aPhoto=document.getElementById('a-photo');
+const addPhotoPreview=document.getElementById('add-photo-preview');
+const btnRmAddPhoto=document.getElementById('btn-rm-add-photo');
 const fmsg=document.getElementById('fmsg');
+
 addToggle.addEventListener('click',()=>{
   const open=addToggle.getAttribute('aria-expanded')==='true';
   addToggle.setAttribute('aria-expanded',String(!open));
   addForm.classList.toggle('open',!open);
   if(!open)setTimeout(()=>aNr.focus(),50);
 });
+
+aPhoto.addEventListener('change',()=>{
+  const file=aPhoto.files[0];
+  if(!file)return;
+  addPhotoPreview.src=URL.createObjectURL(file);
+  addPhotoPreview.style.display='block';
+  btnRmAddPhoto.style.display='inline';
+});
+btnRmAddPhoto.addEventListener('click',()=>{
+  aPhoto.value='';
+  if(addPhotoPreview.src)URL.revokeObjectURL(addPhotoPreview.src);
+  addPhotoPreview.src=''; addPhotoPreview.style.display='none';
+  btnRmAddPhoto.style.display='none';
+});
+
 function showMsg(txt,type){fmsg.textContent=txt;fmsg.className='fmsg '+type;if(type==='ok')setTimeout(()=>{fmsg.textContent='';fmsg.className='fmsg';},2500);}
-function doAdd(){
+async function doAdd(){
   const nr=aNr.value.trim();const desc=aDesc.value.trim();
   if(!nr){showMsg('Vul een artikelnummer in.','err');aNr.focus();return;}
   if(!/^\d+$/.test(nr)){showMsg('Alleen cijfers toegestaan.','err');aNr.focus();return;}
   if(!desc){showMsg('Vul een omschrijving in.','err');aDesc.focus();return;}
-  store.custom.push({id:'c'+Date.now(),nr:parseInt(nr),desc});
-  saveStore();render();aNr.value='';aDesc.value='';showMsg('✓ '+nr+' toegevoegd','ok');aNr.focus();
+  const id='c'+Date.now();
+  store.custom.push({id,nr:parseInt(nr),desc});
+  saveStore();
+  const photoFile=aPhoto.files[0];
+  if(photoFile)await saveUserPhoto(id,photoFile);
+  render();
+  aNr.value='';aDesc.value='';aPhoto.value='';
+  addPhotoPreview.src='';addPhotoPreview.style.display='none';
+  btnRmAddPhoto.style.display='none';
+  showMsg('✓ '+nr+' toegevoegd','ok');aNr.focus();
 }
 document.getElementById('btn-add').addEventListener('click',doAdd);
 [aNr,aDesc].forEach(el=>el.addEventListener('keydown',e=>{if(e.key==='Enter')doAdd();}));
 
-render();
+openPhotoDB().then(loadAllUserPhotos).then(()=>render());
 </script>
 
 <script>
